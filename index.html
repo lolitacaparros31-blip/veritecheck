@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VéritéCheck – Vérifier une information</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Vérité<span>Check</span></h1>
+    <p>Colle une affirmation, un titre ou une citation : l'assistant t'aide à juger sa fiabilité.</p>
+    <p class="demo-note">Chaque verdict s'appuie sur des sources reconnues (grands médias, sites officiels, organismes scientifiques). Sans source : information non vérifiable.</p>
+  </header>
+
+  <main class="layout">
+    <!-- Assistant -->
+    <section class="panel" aria-label="Assistant de vérification">
+      <div class="guide">
+        <button id="avatar" class="avatar" type="button" aria-label="Avatar guide : cliquer pour un conseil">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <circle id="face" cx="60" cy="60" r="52" />
+            <line id="b1" x1="32" y1="38" x2="50" y2="38" />
+            <line id="b2" x1="70" y1="38" x2="88" y2="38" />
+            <circle class="eye" cx="42" cy="54" r="6" />
+            <circle class="eye" cx="78" cy="54" r="6" />
+            <path id="mouth" d="M42 84 Q60 94 78 84" />
+          </svg>
+        </button>
+        <div id="bubble" class="bubble" aria-live="polite"></div>
+      </div>
+
+      <div id="log" class="log" aria-live="polite"></div>
+
+      <form id="form">
+        <label for="claim" class="sr">Information à vérifier</label>
+        <textarea id="claim" rows="3" maxlength="500" placeholder="Ex : Le pape François a été photographié en doudoune blanche…"></textarea>
+        <button type="submit" id="send">Vérifier</button>
+      </form>
+
+      <p class="hint">Cas de test :</p>
+      <div class="chips" id="chips"></div>
+    </section>
+
+    <!-- Résultat -->
+    <section class="panel" aria-label="Résultat de l'analyse">
+      <h2>Résultat</h2>
+      <div id="empty" class="empty">Aucune analyse pour le moment. Saisis une information ou clique sur un cas de test.</div>
+
+      <div id="result" hidden>
+        <div class="verdict-row">
+          <span id="badge" class="badge">—</span>
+          <span id="kind" class="kind"></span>
+        </div>
+        <blockquote id="echo"></blockquote>
+
+        <div class="gauge-label">
+          <span>Indice de fiabilité</span><strong id="score">0/100</strong>
+        </div>
+        <div class="gauge" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="gauge">
+          <div id="gaugeFill"></div>
+        </div>
+
+        <h3>Explication</h3>
+        <div id="explain" class="explain"></div>
+
+        <div id="sourcesBox">
+          <h3>Sources</h3>
+          <ol id="sources" class="sources"></ol>
+          <p id="ecartees" class="ecartees"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="info">
+    <article class="panel">
+      <h2>Limites de la plateforme</h2>
+      <ul>
+        <li>L'outil ne conclut que si des sources reconnues confirment ou démentent l'information ; sinon il l'indique « non vérifiable ». Une info vraie mais peu couverte par les médias sera donc non vérifiable.</li>
+        <li>La liste des sources reconnues s'inspire d'un guide de Ouest-France (Panorapresse). Un média reconnu peut aussi se tromper : ouvre toujours les liens.</li>
+        <li>L'IA choisit les phrases et les sources : elle peut mal résumer un article. Les numéros [1] [2] permettent de contrôler chaque phrase.</li>
+        <li>Sans serveur IA, seule une dizaine de cas connus (sources vérifiées à la main) peuvent être analysés.</li>
+        <li>Les phrases négatives ou nuancées ne sont pas interprétées : l'outil le signale au lieu de deviner.</li>
+        <li>Il ne détecte pas un deepfake dans une image, une vidéo ou un audio : il ne lit que du texte.</li>
+      </ul>
+    </article>
+    <article class="panel">
+      <h2>Précautions avant de partager</h2>
+      <ol>
+        <li><strong>Source :</strong> qui publie ? Le média ou l'auteur est-il identifiable et reconnu ?</li>
+        <li><strong>Recoupement :</strong> au moins deux sources indépendantes disent-elles la même chose ?</li>
+        <li><strong>Date et contexte :</strong> l'information est-elle récente ou un vieux contenu recyclé ?</li>
+        <li><strong>Image / vidéo :</strong> fais une recherche inversée (<a href="https://lens.google.com/" target="_blank" rel="noopener">Google Lens</a>, <a href="https://tineye.com/" target="_blank" rel="noopener">TinEye</a>) et cherche des anomalies (mains, ombres, synchro labiale).</li>
+        <li><strong>Émotion :</strong> si le contenu te pousse à réagir ou partager vite, ralentis.</li>
+      </ol>
+    </article>
+  </section>
+
+  <dialog id="popup" class="popup" aria-labelledby="popupTitre">
+    <div class="popup-icone" aria-hidden="true">?</div>
+    <h2 id="popupTitre">Information non vérifiable</h2>
+    <p id="popupRaison"></p>
+    <p id="popupEcartees" class="ecartees"></p>
+    <div id="popupSignauxBox" hidden>
+      <h3>Signaux repérés dans le texte</h3>
+      <ul id="popupSignaux"></ul>
+    </div>
+    <h3>Avant de partager</h3>
+    <ul>
+      <li>Cherche si un média reconnu ou un site officiel en parle.</li>
+      <li>Retrouve la source d'origine et sa date.</li>
+      <li>Dans le doute, ne partage pas.</li>
+    </ul>
+    <h3>Vérifier toi-même</h3>
+    <ul id="popupOutils"></ul>
+    <button type="button" id="popupFermer">Fermer</button>
+  </dialog>
+
+  <footer class="foot">TP – Fake news, deepfakes et intelligence artificielle · démo pédagogique</footer>
+  <script src="script.js"></script>
+</body>
+</html>
