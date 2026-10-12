@@ -70,7 +70,10 @@ TITRE: titre court du sujet
 Règles :
 - 2 à 4 phrases, une par ligne, chacune commençant par "- " et finissant par au moins un numéro ;
 - n'écris aucun fait absent des extraits ;
-- si les extraits ne parlent pas de cette affirmation, ou ne permettent pas de trancher, VERDICT: incertain."""
+- si les extraits confirment l'essentiel de l'affirmation, même avec d'autres mots, VERDICT: vrai ;
+- si les extraits la contredisent ou la présentent comme une rumeur ou un mythe, VERDICT: faux ;
+- VERDICT: incertain seulement si les extraits ne parlent pas du sujet ou se contredisent entre eux ;
+- SCORE = fiabilité de l'affirmation (pas ta certitude) : élevé si vrai, bas si faux."""
 
 
 def limite_atteinte(ip):
