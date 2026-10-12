@@ -312,6 +312,10 @@ def analyser(texte, articles):
         for n in refs:
             numeros.setdefault(n, len(numeros) + 1)
     score = max(0, min(100, score))
+    # L'IA donne parfois sa certitude (ex. 95 pour « sûrement faux ») au lieu de la fiabilité
+    # de l'affirmation : on remet le score dans le bon sens.
+    if (verdict == "faux" and score > 50) or (verdict == "vrai" and score < 50):
+        score = 100 - score
     score = max(score, 55) if verdict == "vrai" else min(score, 45)
     return {
         "verifiable": True, "moteur": "web+ia", "modele_ia": modele, "verdict": verdict,
