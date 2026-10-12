@@ -16,13 +16,13 @@ Plateforme web de vérification d'information.
 
 ### 2. Dépôt GitHub
 1. Crée un dépôt public `veritecheck` sur github.com.
-2. « Add file » → « Upload files » → glisse **tout le contenu du dossier** (`index.html`, `style.css`, `script.js`, `README.md` et le dossier `backend`) → « Commit changes ».
+2. « Add file » → « Upload files » → glisse **tout le contenu du dossier** (`index.html`, `style.css`, `script.js`, `README.md` `avatar.webp`, `app.py` et `requirements.txt`) → « Commit changes ».
 
 ### 3. Backend sur Render
 1. Crée un compte sur https://render.com (connexion avec GitHub).
 2. « New » → « Web Service » → choisis ton dépôt `veritecheck`.
 3. Réglages :
-   - **Root Directory** : `backend`
+   - **Root Directory** : laisser vide (`app.py` est à la racine du dépôt)
    - **Runtime** : Python
    - **Build Command** : `pip install -r requirements.txt`
    - **Start Command** : `gunicorn app:app --timeout 120`
@@ -42,7 +42,7 @@ Plateforme web de vérification d'information.
 
 ## Notes
 - Le serveur gratuit s'endort : le premier appel peut prendre ~30 s. Ouvre `/healthz` quelques minutes avant la présentation.
-- Modèle par défaut : `gemini-2.5-flash`. S'il n'est plus proposé dans AI Studio, ajoute la variable `GEMINI_MODEL` avec le nom du modèle actuel.
+- Modèle par défaut : `gemini-3.8-flash` (`gemini-2.5-flash` renvoie une erreur 404 pour les nouveaux comptes). S'il n'est plus proposé dans AI Studio, ajoute la variable `GEMINI_MODEL` avec le nom du modèle actuel.
 - La recherche web est obligatoire : sans elle, il n'y a pas de sources, donc pas de verdict.
 
 ## Limites à présenter

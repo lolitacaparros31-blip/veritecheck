@@ -4,98 +4,160 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VéritéCheck – Vérifier une information</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Permanent+Marker&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="top">
-    <h1>Vérité<span>Check</span></h1>
-    <p>Colle une affirmation, un titre ou une citation : l'assistant t'aide à juger sa fiabilité.</p>
-    <p class="demo-note">Chaque verdict s'appuie sur des sources reconnues (grands médias, sites officiels, organismes scientifiques). Sans source : information non vérifiable.</p>
+  <!-- Décor graffiti -->
+  <div class="decor" aria-hidden="true">
+    <span class="tag tag-faits">Des faits<br>pas des rumeurs</span>
+    <span class="tag tag-fake">FAKE?</span>
+    <svg class="couronne couronne-droite" viewBox="0 0 60 40"><path d="M5 35 L8 8 L20 24 L30 4 L40 24 L52 8 L55 35 Z"/></svg>
+    <svg class="etoile" viewBox="0 0 60 60"><path d="M30 4 L37 24 L58 24 L41 37 L48 57 L30 45 L12 57 L19 37 L2 24 L23 24 Z"/></svg>
+    <span class="trait trait-1"></span>
+    <span class="trait trait-2"></span>
+  </div>
+
+  <header class="hero">
+    <div class="mascotte">
+      <button id="avatar" class="avatar" type="button" aria-label="Avatar guide : cliquer pour un conseil">
+        <svg class="couronne couronne-avatar" viewBox="0 0 60 40" aria-hidden="true"><path d="M5 35 L8 8 L20 24 L30 4 L40 24 L52 8 L55 35 Z"/></svg>
+        <img id="photo" class="photo" src="avatar.webp" alt="Avatar du guide VéritéCheck" hidden>
+        <svg id="dessin" class="dessin" viewBox="0 0 120 120" aria-hidden="true">
+          <circle id="face" cx="60" cy="60" r="52" />
+          <line id="b1" x1="32" y1="38" x2="50" y2="38" />
+          <line id="b2" x1="70" y1="38" x2="88" y2="38" />
+          <circle class="eye" cx="42" cy="54" r="6" />
+          <circle class="eye" cx="78" cy="54" r="6" />
+          <path id="mouth" d="M42 84 Q60 94 78 84" />
+        </svg>
+      </button>
+      <div id="bubble" class="bulle-bd" aria-live="polite"></div>
+    </div>
+
+    <div class="titre">
+      <h1>Vérité<span>Check</span></h1>
+      <p class="slogan">Un doute ? On vérifie !</p>
+      <p class="intro">Colle une affirmation, un titre ou une citation : l'assistant t'aide à juger sa fiabilité.</p>
+      <p class="intro petit">Chaque verdict s'appuie sur des sources reconnues (grands médias, sites officiels, organismes scientifiques).</p>
+    </div>
   </header>
 
-  <main class="layout">
-    <!-- Assistant -->
-    <section class="panel" aria-label="Assistant de vérification">
-      <div class="guide">
-        <button id="avatar" class="avatar" type="button" aria-label="Avatar guide : cliquer pour un conseil">
-          <svg viewBox="0 0 120 120" aria-hidden="true">
-            <circle id="face" cx="60" cy="60" r="52" />
-            <line id="b1" x1="32" y1="38" x2="50" y2="38" />
-            <line id="b2" x1="70" y1="38" x2="88" y2="38" />
-            <circle class="eye" cx="42" cy="54" r="6" />
-            <circle class="eye" cx="78" cy="54" r="6" />
-            <path id="mouth" d="M42 84 Q60 94 78 84" />
-          </svg>
-        </button>
-        <div id="bubble" class="bubble" aria-live="polite"></div>
-      </div>
+  <main class="contenu">
+    <form id="form" class="saisie">
+      <label for="claim" class="sr">Information à vérifier</label>
+      <textarea id="claim" rows="3" maxlength="500" placeholder="Ex : Le pape François a été photographié en doudoune blanche…"></textarea>
+      <button type="submit" id="send">Vérifier <span aria-hidden="true">✦</span></button>
+    </form>
 
-      <div id="log" class="log" aria-live="polite"></div>
-
-      <form id="form">
-        <label for="claim" class="sr">Information à vérifier</label>
-        <textarea id="claim" rows="3" maxlength="500" placeholder="Ex : Le pape François a été photographié en doudoune blanche…"></textarea>
-        <button type="submit" id="send">Vérifier</button>
-      </form>
-
-      <p class="hint">Cas de test :</p>
+    <div class="exemples">
+      <span>Exemples :</span>
       <div class="chips" id="chips"></div>
+    </div>
+
+    <!-- Pendant la recherche : le dino court -->
+    <section id="loader" class="loader" hidden aria-live="polite">
+      <div class="piste">
+        <svg class="dino" viewBox="0 0 22 22" aria-hidden="true">
+          <rect x="11" y="0" width="9" height="1"/>
+          <rect x="10" y="1" width="11" height="6"/>
+          <rect x="12" y="2" width="1" height="1" class="oeil"/>
+          <rect x="10" y="7" width="5" height="1"/>
+          <rect x="10" y="8" width="9" height="1"/>
+          <rect x="8" y="9" width="7" height="4"/>
+          <rect x="15" y="11" width="3" height="1"/>
+          <rect x="17" y="12" width="1" height="1"/>
+          <rect x="0" y="8" width="1" height="4"/>
+          <rect x="1" y="10" width="2" height="4"/>
+          <rect x="3" y="11" width="12" height="4"/>
+          <rect x="5" y="15" width="8" height="2"/>
+          <g class="pattes pattes-a">
+            <rect x="5" y="17" width="2" height="4"/><rect x="7" y="20" width="1" height="1"/>
+            <rect x="10" y="17" width="2" height="2"/><rect x="12" y="18" width="1" height="1"/>
+          </g>
+          <g class="pattes pattes-b">
+            <rect x="5" y="17" width="2" height="2"/><rect x="7" y="18" width="1" height="1"/>
+            <rect x="10" y="17" width="2" height="4"/><rect x="12" y="20" width="1" height="1"/>
+          </g>
+        </svg>
+        <svg class="cactus" viewBox="0 0 12 22" aria-hidden="true">
+          <rect x="4" y="0" width="4" height="22"/>
+          <rect x="0" y="5" width="2" height="7"/><rect x="2" y="10" width="2" height="2"/>
+          <rect x="10" y="3" width="2" height="7"/><rect x="8" y="8" width="2" height="2"/>
+        </svg>
+        <span class="nuage nuage-1"></span>
+        <span class="nuage nuage-2"></span>
+        <div class="sol"></div>
+      </div>
+      <p id="loaderTexte">Je cherche des sources reconnues…</p>
     </section>
 
-    <!-- Résultat -->
-    <section class="panel" aria-label="Résultat de l'analyse">
-      <h2>Résultat</h2>
-      <div id="empty" class="empty">Aucune analyse pour le moment. Saisis une information ou clique sur un cas de test.</div>
-
-      <div id="result" hidden>
-        <div class="verdict-row">
-          <span id="badge" class="badge">—</span>
-          <span id="kind" class="kind"></span>
+    <section id="result" class="carte" hidden aria-live="polite">
+      <div class="carte-haut">
+        <div class="verdict">
+          <div class="tampon">
+            <span class="tampon-icone" id="icone" aria-hidden="true">✕</span>
+            <span id="badge">Faux</span>
+          </div>
+          <span class="traits" aria-hidden="true"><i></i><i></i><i></i></span>
         </div>
-        <blockquote id="echo"></blockquote>
-
-        <div class="gauge-label">
-          <span>Indice de fiabilité</span><strong id="score">0/100</strong>
+        <div class="fiabilite">
+          <span class="pill">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="9" width="3" height="6"/><rect x="6.5" y="5" width="3" height="10"/><rect x="12" y="1" width="3" height="14"/></svg>
+            Indice de fiabilité : <strong id="score">0 %</strong>
+          </span>
+          <div class="gauge" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="gauge">
+            <div id="gaugeFill"></div>
+          </div>
         </div>
-        <div class="gauge" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="gauge">
-          <div id="gaugeFill"></div>
-        </div>
+      </div>
+      <p id="echo" class="echo"></p>
+      <p id="kind" class="kind"></p>
 
-        <h3>Explication</h3>
-        <div id="explain" class="explain"></div>
-
-        <div id="sourcesBox">
-          <h3>Sources</h3>
+      <div class="colonnes">
+        <div id="sourcesBox" class="col">
+          <h3>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+            Sources
+          </h3>
           <ol id="sources" class="sources"></ol>
           <p id="ecartees" class="ecartees"></p>
         </div>
+        <div class="col">
+          <h3>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>
+            Explication
+          </h3>
+          <div id="explain" class="explain"></div>
+        </div>
       </div>
     </section>
-  </main>
 
-  <section class="info">
-    <article class="panel">
-      <h2>Limites de la plateforme</h2>
-      <ul>
-        <li>L'outil ne conclut que si des sources reconnues confirment ou démentent l'information ; sinon il l'indique « non vérifiable ». Une info vraie mais peu couverte par les médias sera donc non vérifiable.</li>
-        <li>La liste des sources reconnues s'inspire d'un guide de Ouest-France (Panorapresse). Un média reconnu peut aussi se tromper : ouvre toujours les liens.</li>
-        <li>L'IA choisit les phrases et les sources : elle peut mal résumer un article. Les numéros [1] [2] permettent de contrôler chaque phrase.</li>
-        <li>Sans serveur IA, seule une dizaine de cas connus (sources vérifiées à la main) peuvent être analysés.</li>
-        <li>Les phrases négatives ou nuancées ne sont pas interprétées : l'outil le signale au lieu de deviner.</li>
-        <li>Il ne détecte pas un deepfake dans une image, une vidéo ou un audio : il ne lit que du texte.</li>
-      </ul>
-    </article>
-    <article class="panel">
-      <h2>Précautions avant de partager</h2>
-      <ol>
-        <li><strong>Source :</strong> qui publie ? Le média ou l'auteur est-il identifiable et reconnu ?</li>
-        <li><strong>Recoupement :</strong> au moins deux sources indépendantes disent-elles la même chose ?</li>
-        <li><strong>Date et contexte :</strong> l'information est-elle récente ou un vieux contenu recyclé ?</li>
-        <li><strong>Image / vidéo :</strong> fais une recherche inversée (<a href="https://lens.google.com/" target="_blank" rel="noopener">Google Lens</a>, <a href="https://tineye.com/" target="_blank" rel="noopener">TinEye</a>) et cherche des anomalies (mains, ombres, synchro labiale).</li>
-        <li><strong>Émotion :</strong> si le contenu te pousse à réagir ou partager vite, ralentis.</li>
-      </ol>
-    </article>
-  </section>
+    <section class="info">
+      <article class="panneau">
+        <h2>Limites de la plateforme</h2>
+        <ul>
+          <li>L'outil ne conclut que si des sources reconnues confirment ou démentent l'information ; sinon il l'indique « non vérifiable ». Une info vraie mais peu couverte par les médias sera donc non vérifiable.</li>
+          <li>La liste des sources reconnues s'inspire d'un guide de Ouest-France (Panorapresse). Un média reconnu peut aussi se tromper : ouvre toujours les liens.</li>
+          <li>L'IA choisit les phrases et les sources : elle peut mal résumer un article. Les numéros [1] [2] permettent de contrôler chaque phrase.</li>
+          <li>Sans serveur IA, seule une dizaine de cas connus (sources vérifiées à la main) peuvent être analysés.</li>
+          <li>Il ne détecte pas un deepfake dans une image, une vidéo ou un audio : il ne lit que du texte.</li>
+        </ul>
+      </article>
+      <article class="panneau">
+        <h2>Précautions avant de partager</h2>
+        <ol>
+          <li><strong>Source :</strong> qui publie ? Le média ou l'auteur est-il identifiable et reconnu ?</li>
+          <li><strong>Recoupement :</strong> au moins deux sources indépendantes disent-elles la même chose ?</li>
+          <li><strong>Date et contexte :</strong> l'information est-elle récente ou un vieux contenu recyclé ?</li>
+          <li><strong>Image / vidéo :</strong> fais une recherche inversée (<a href="https://lens.google.com/" target="_blank" rel="noopener">Google Lens</a>, <a href="https://tineye.com/" target="_blank" rel="noopener">TinEye</a>) et cherche des anomalies (mains, ombres, synchro labiale).</li>
+          <li><strong>Émotion :</strong> si le contenu te pousse à réagir ou partager vite, ralentis.</li>
+        </ol>
+      </article>
+    </section>
+  </main>
 
   <dialog id="popup" class="popup" aria-labelledby="popupTitre">
     <div class="popup-icone" aria-hidden="true">?</div>

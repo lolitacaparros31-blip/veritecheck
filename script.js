@@ -2,7 +2,7 @@
 
 /* URL du backend Python (ex : "https://veritecheck-api.onrender.com").
    Laisser vide = mode démo local, sans IA. */
-const API_URL = "";
+const API_URL = "https://veritecheck.onrender.com";
 
 /* ---------- Sources vérifiées des cas connus ----------
    Chaque article a été relu : chaque phrase ci-dessous renvoie au passage qui la confirme. */
@@ -134,11 +134,11 @@ const MOODS = {
   incertain: { mouth: "M42 86 Q51 80 60 86 T78 86", face: "#ffeab8", b1: [40, 35], b2: [35, 40] }
 };
 const PAROLES = {
-  idle: "Bonjour ! Colle une affirmation à vérifier ou essaie un cas de test.",
-  thinking: "Je cherche des sources…",
-  vrai: "Des sources reconnues confirment cette information. Ouvre-les pour vérifier.",
-  faux: "Des sources reconnues démentent ce contenu. Ne le partage pas !",
-  incertain: "Je n'ai trouvé aucune source reconnue : information non vérifiable."
+  idle: "On vérifie avant de parler et partager !",
+  thinking: "Je fouille les sources…",
+  vrai: "Confirmé par des sources reconnues !",
+  faux: "Démenti par les sources. Ne partage pas !",
+  incertain: "Aucune source fiable : prudence !"
 };
 const CONSEILS = [
   "Astuce : une info qui t'énerve ou te choque est souvent faite pour être partagée vite.",
@@ -158,7 +158,8 @@ function setMood(nom, parole) {
   const b1 = $("b1"), b2 = $("b2");
   b1.setAttribute("y1", m.b1[0]); b1.setAttribute("y2", m.b1[1]);
   b2.setAttribute("y1", m.b2[0]); b2.setAttribute("y2", m.b2[1]);
-  $("avatar").classList.toggle("thinking", nom === "thinking");
+  const avatar = $("avatar");
+  ["thinking", "vrai", "faux", "incertain"].forEach(c => avatar.classList.toggle(c, nom === c));
   $("bubble").textContent = parole || PAROLES[nom];
 }
 
@@ -288,21 +289,36 @@ function lien(nom, url) {
   return a;
 }
 
-function afficher(texte, r) {
-  $("empty").hidden = true;
-  $("result").hidden = false;
+const ICONES = { vrai: "✓", faux: "✕", incertain: "?" };
+const SVG_NS = "http://www.w3.org/2000/svg";
 
-  const badge = $("badge");
-  badge.textContent = LABELS[r.verdict];
-  badge.className = "badge " + r.verdict;
+function iconeLien() {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("class", "source-lien");
+  svg.setAttribute("aria-hidden", "true");
+  const path = document.createElementNS(SVG_NS, "path");
+  path.setAttribute("d", "M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5");
+  svg.appendChild(path);
+  return svg;
+}
+
+function afficher(texte, r) {
+  const carte = $("result");
+  carte.hidden = false;
+  carte.className = "carte " + r.verdict;
+  // relance l'animation d'apparition
+  carte.style.animation = "none"; void carte.offsetWidth; carte.style.animation = "";
+
+  $("badge").textContent = r.verifiable ? LABELS[r.verdict] : "Non vérifiable";
+  $("icone").textContent = ICONES[r.verdict];
   $("kind").textContent = r.verifiable ? TYPES[r.type] : TYPES.nonverif;
   $("echo").textContent = texte;
 
   const score = r.verifiable ? r.score : 0;
-  $("score").textContent = r.verifiable ? score + "/100" : "—";
+  $("score").textContent = r.verifiable ? score + " %" : "—";
   $("gauge").setAttribute("aria-valuenow", score);
   const fill = $("gaugeFill");
-  fill.style.background = COULEURS[r.verdict];
   fill.style.width = "0";
   requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = score + "%"; }));
 
@@ -340,10 +356,20 @@ function afficher(texte, r) {
     r.sources.forEach(s => {
       const li = document.createElement("li");
       li.id = "source-" + s.num;
-      li.value = s.num;
-      const small = document.createElement("small");
-      small.textContent = " · " + s.domaine;
-      li.append(lien(s.nom, s.url), small);
+      const a = lien("", s.url);
+      a.className = "source";
+      const num = document.createElement("span");
+      num.className = "source-num";
+      num.textContent = s.num;
+      const txt = document.createElement("span");
+      txt.className = "source-txt";
+      const nom = document.createElement("strong");
+      nom.textContent = s.nom;
+      const dom = document.createElement("small");
+      dom.textContent = s.domaine;
+      txt.append(nom, dom);
+      a.append(num, txt, iconeLien());
+      li.appendChild(a);
       src.appendChild(li);
     });
     $("ecartees").textContent = r.sourcesEcartees
@@ -377,25 +403,27 @@ function ouvrirPopup(r) {
   else dlg.setAttribute("open", "");
 }
 
-function ajouterMessage(role, texte) {
-  const d = document.createElement("div");
-  d.className = "msg " + role;
-  d.textContent = texte;
-  $("log").appendChild(d);
-  $("log").scrollTop = $("log").scrollHeight;
-}
+const attendre = ms => new Promise(res => setTimeout(res, ms));
 
 async function verifier(texte) {
   texte = texte.trim();
   if (texte.length < 12) {
-    setMood("incertain", "Donne-moi une phrase un peu plus complète pour que je puisse l'analyser.");
+    setMood("incertain", "Écris une phrase plus complète !");
     return;
   }
-  ajouterMessage("user", texte);
+  $("claim").value = texte;
   $("send").disabled = true;
-  setMood("thinking", API_URL ? "Je cherche des sources reconnues sur le web… (le premier appel peut prendre 1 min)" : undefined);
+  $("result").hidden = true;
+  $("loader").hidden = false; // le dino court pendant la recherche
+  $("loaderTexte").textContent = "Je cherche des sources reconnues…";
+  $("loader").scrollIntoView({ behavior: "smooth", block: "center" });
+  setMood("thinking");
+  const reveil = setTimeout(() => {
+    $("loaderTexte").textContent = "Le serveur se réveille, ça peut prendre jusqu'à une minute…";
+  }, 8000);
 
   let r = null;
+  const debut = Date.now();
   if (API_URL) {
     try { r = await analyserAvecServeur(texte); }
     catch (e) {
@@ -403,16 +431,17 @@ async function verifier(texte) {
       r = analyserLocal(texte, "Le serveur de recherche de sources est indisponible : impossible de trouver des sources pour cette information.");
     }
   } else {
-    await new Promise(res => setTimeout(res, 600));
     r = analyserLocal(texte);
   }
+  await attendre(Math.max(0, 1800 - (Date.now() - debut))); // laisse le temps de voir le dino
+  clearTimeout(reveil);
+  $("loader").hidden = true;
 
   afficher(texte, r);
+  $("result").scrollIntoView({ behavior: "smooth", block: "start" });
   if (r.verifiable) {
-    ajouterMessage("bot", LABELS[r.verdict] + " — indice de fiabilité " + r.score + "/100, " + r.sources.length + " source(s) reconnue(s).");
-    setMood(r.verdict);
+    setMood(r.verdict, PAROLES[r.verdict] + " (" + r.sources.length + " source" + (r.sources.length > 1 ? "s" : "") + ")");
   } else {
-    ajouterMessage("bot", "Information non vérifiable.");
     setMood("incertain");
     ouvrirPopup(r);
   }
@@ -423,8 +452,12 @@ async function verifier(texte) {
 $("form").addEventListener("submit", e => {
   e.preventDefault();
   verifier($("claim").value);
-  $("claim").value = "";
 });
+// Image de l'avatar (avatar.webp) si elle existe, sinon l'avatar dessiné
+const photo = $("photo");
+function afficherPhoto() { photo.hidden = false; $("dessin").style.display = "none"; }
+if (photo.complete && photo.naturalWidth) afficherPhoto();
+else photo.addEventListener("load", afficherPhoto);
 $("claim").addEventListener("keydown", e => {
   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("form").requestSubmit(); }
 });
@@ -440,4 +473,3 @@ EXEMPLES.forEach(ex => {
   $("chips").appendChild(b);
 });
 setMood("idle");
-ajouterMessage("bot", "Bienvenue. Chaque verdict est appuyé par des sources reconnues ; sans source, l'information est déclarée non vérifiable.");
