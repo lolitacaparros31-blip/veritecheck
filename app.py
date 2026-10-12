@@ -19,7 +19,9 @@ API_KEY = os.environ.get("GEMINI_API_KEY", "")
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
 # Si un modèle est indisponible (404) ou sans quota gratuit (429), on essaie le suivant.
 MODELES = list(dict.fromkeys([MODEL, "gemini-3.8-flash", "gemini-3.6-flash",
-                              "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]))
+                              "gemini-3.5-flash-lite", "gemini-3.1-flash-lite",
+                              "gemini-flash-latest", "gemini-flash-lite-latest",
+                              "gemini-2.5-flash-lite", "gemini-2.5-flash"]))
 URL_MODELE = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent"
 modele_actif = MODELES[0]
 
@@ -72,6 +74,10 @@ def limite_atteinte(ip):
     return False
 
 
+class ErreurGemini(Exception):
+    """Refus de l'API Gemini (quota, modèle, clé…), avec le message de Google."""
+
+
 def appeler_gemini(texte):
     global modele_actif
     payload = {
@@ -82,6 +88,7 @@ def appeler_gemini(texte):
     }
     # Le dernier modèle qui a fonctionné est essayé en premier.
     ordre = [modele_actif] + [m for m in MODELES if m != modele_actif]
+    erreurs = []
     for modele in ordre:
         rep = requests.post(
             URL_MODELE.format(modele),
@@ -92,11 +99,17 @@ def appeler_gemini(texte):
         if rep.ok:
             modele_actif = modele
             return rep.json()
-        # Message de Google (ne contient pas la clé) pour comprendre l'échec dans les logs.
-        app.logger.warning("Gemini %s -> HTTP %s : %s", modele, rep.status_code, rep.text[:400])
+        # Message de Google (ne contient pas la clé), sur une seule ligne pour les logs.
+        try:
+            message = rep.json().get("error", {}).get("message", "")
+        except ValueError:
+            message = rep.text
+        message = " ".join(message.split())[:500]
+        erreurs.append(f"{modele}: HTTP {rep.status_code} - {message}")
+        app.logger.warning("Gemini %s -> HTTP %s : %s", modele, rep.status_code, message)
         if rep.status_code not in (404, 429):
-            rep.raise_for_status()
-    rep.raise_for_status()
+            break
+    raise ErreurGemini(" | ".join(erreurs))
 
 
 def domaine_reconnu(hote):
@@ -235,6 +248,9 @@ def verifier():
 
     try:
         return jsonify(extraire(appeler_gemini(texte)))
+    except ErreurGemini as e:
+        # Le message de Google aide à corriger la configuration (il ne contient pas la clé).
+        return jsonify(erreur="L'API Gemini a refusé la requête.", detail=str(e)), 502
     except Exception:
         app.logger.exception("Échec de l'analyse")
         return jsonify(erreur="L'analyse IA a échoué."), 502
