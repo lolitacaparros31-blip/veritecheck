@@ -17,7 +17,11 @@ CORS(app, origins=os.environ.get("ALLOWED_ORIGIN", "*"))
 
 API_KEY = os.environ.get("GEMINI_API_KEY", "")
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
-ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
+# Si un modèle est indisponible (404) ou sans quota gratuit (429), on essaie le suivant.
+MODELES = list(dict.fromkeys([MODEL, "gemini-3.8-flash", "gemini-3.6-flash",
+                              "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]))
+URL_MODELE = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent"
+modele_actif = MODELES[0]
 
 MIN_LEN, MAX_LEN = 12, 500
 RATE_LIMIT, RATE_WINDOW = 10, 60  # 10 requêtes par minute et par IP
@@ -69,20 +73,30 @@ def limite_atteinte(ip):
 
 
 def appeler_gemini(texte):
+    global modele_actif
     payload = {
         "systemInstruction": {"parts": [{"text": SYSTEM}]},
         "contents": [{"role": "user", "parts": [{"text": "Affirmation à analyser :\n" + texte}]}],
         "tools": [{"google_search": {}}],
         "generationConfig": {"temperature": 0.2},
     }
-    rep = requests.post(
-        ENDPOINT,
-        headers={"x-goog-api-key": API_KEY, "Content-Type": "application/json"},
-        json=payload,
-        timeout=50,
-    )
+    # Le dernier modèle qui a fonctionné est essayé en premier.
+    ordre = [modele_actif] + [m for m in MODELES if m != modele_actif]
+    for modele in ordre:
+        rep = requests.post(
+            URL_MODELE.format(modele),
+            headers={"x-goog-api-key": API_KEY, "Content-Type": "application/json"},
+            json=payload,
+            timeout=50,
+        )
+        if rep.ok:
+            modele_actif = modele
+            return rep.json()
+        # Message de Google (ne contient pas la clé) pour comprendre l'échec dans les logs.
+        app.logger.warning("Gemini %s -> HTTP %s : %s", modele, rep.status_code, rep.text[:400])
+        if rep.status_code not in (404, 429):
+            rep.raise_for_status()
     rep.raise_for_status()
-    return rep.json()
 
 
 def domaine_reconnu(hote):
@@ -203,7 +217,7 @@ def accueil():
 
 @app.get("/healthz")
 def sante():
-    return jsonify(ok=True, cle_configuree=bool(API_KEY), modele=MODEL)
+    return jsonify(ok=True, cle_configuree=bool(API_KEY), modele=modele_actif, modeles=MODELES)
 
 
 @app.post("/api/verifier")
