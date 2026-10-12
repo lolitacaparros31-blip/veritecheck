@@ -272,6 +272,8 @@ a { color: var(--bleu-clair); }
 .panneau li { margin-bottom: 8px; }
 .panneau strong { color: var(--encre); }
 .foot { position: relative; z-index: 1; text-align: center; color: var(--doux); font-size: .8rem; padding: 10px 16px 28px; }
+.foot p { margin: 0 auto 6px; max-width: 760px; }
+.foot .mention { font-size: .72rem; opacity: .8; }
 
 /* ---------- Pop-up « Information non vérifiable » ---------- */
 .popup {
