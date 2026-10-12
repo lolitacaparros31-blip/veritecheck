@@ -266,7 +266,7 @@ async function analyserAvecServeur(texte) {
       return { verifiable: false, verdict: "incertain", titre: d.titre || "Analyse", raison: "Aucune phrase de l'analyse n'est appuyée par une source reconnue.", signaux: [] };
     }
     return {
-      verifiable: true, type: "ia", verdict: d.verdict, score: Number(d.score) || 50,
+      verifiable: true, type: d.moteur === "factcheck" ? "factcheck" : "ia", verdict: d.verdict, score: Number(d.score) || 50,
       titre: d.titre || "Analyse", phrases, sources, sourcesEcartees: d.sources_ecartees || 0
     };
   } finally {
@@ -279,6 +279,7 @@ const LABELS = { vrai: "Vrai", faux: "Faux", incertain: "Incertain" };
 const TYPES = {
   connu: "Cas connu – sources vérifiées",
   ia: "Analyse IA – sources reconnues trouvées sur le web",
+  factcheck: "Vérifications publiées par des rédactions de fact-checking (via Google Fact Check)",
   nonverif: "Information non vérifiable"
 };
 const COULEURS = { vrai: "var(--vrai)", faux: "var(--faux)", incertain: "var(--incertain)" };
