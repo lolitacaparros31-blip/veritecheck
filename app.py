@@ -19,9 +19,11 @@ app = Flask(__name__)
 CORS(app, origins=os.environ.get("ALLOWED_ORIGIN", "*"))
 
 API_KEY = os.environ.get("GEMINI_API_KEY", "")
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-3-flash-preview")
 # Si un modèle est indisponible (404) ou sans quota gratuit (429), on essaie le suivant.
-MODELES = list(dict.fromkeys([MODEL, "gemini-3.8-flash", "gemini-3.6-flash",
+# « Gemini 3 Flash » est celui qui a un quota gratuit (5 req/min, 20 req/jour) sur ce compte.
+MODELES = list(dict.fromkeys([MODEL, "gemini-3-flash-preview", "gemini-3-flash",
+                              "gemini-3.8-flash", "gemini-3.6-flash",
                               "gemini-3.5-flash-lite", "gemini-3.1-flash-lite",
                               "gemini-flash-latest", "gemini-flash-lite-latest",
                               "gemini-2.5-flash-lite", "gemini-2.5-flash"]))
