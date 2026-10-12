@@ -266,7 +266,7 @@ async function analyserAvecServeur(texte) {
       return { verifiable: false, verdict: "incertain", titre: d.titre || "Analyse", raison: "Aucune phrase de l'analyse n'est appuyée par une source reconnue.", signaux: [] };
     }
     return {
-      verifiable: true, type: ({ factcheck: "factcheck", "factcheck+ia": "factcheckIa" })[d.moteur] || "ia", verdict: d.verdict, score: Number(d.score) || 50,
+      verifiable: true, type: ({ factcheck: "factcheck", "factcheck+ia": "factcheckIa", "web+ia": "webIa" })[d.moteur] || "ia", verdict: d.verdict, score: Number(d.score) || 50,
       titre: d.titre || "Analyse", phrases, sources, sourcesEcartees: d.sources_ecartees || 0
     };
   } finally {
@@ -281,6 +281,7 @@ const TYPES = {
   ia: "Analyse IA – sources reconnues trouvées sur le web",
   factcheck: "Vérifications publiées par des rédactions de fact-checking (via Google Fact Check)",
   factcheckIa: "Vérifications de rédactions (Google Fact Check), expliquées par l'IA Gemini",
+  webIa: "Recherche sur internet (sites reconnus) analysée par l'IA Gemini",
   nonverif: "Information non vérifiable"
 };
 const COULEURS = { vrai: "var(--vrai)", faux: "var(--faux)", incertain: "var(--incertain)" };
