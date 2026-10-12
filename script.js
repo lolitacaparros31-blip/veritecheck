@@ -29,6 +29,8 @@ const BASE = [
     test: n => /zelens?ky/.test(n) && /(rend|reddition|capitul|armes|deepfake)/.test(n),
     verdict: "faux", score: 6,
     titre: "Deepfake de Zelensky appelant à rendre les armes",
+    dialogue: ["Hé Jamy, pourquoi dit-on que Zelensky a demandé à son armée de se rendre ?",
+      "Parce qu'un deepfake a été diffusé en mars 2022 par une chaîne ukrainienne piratée : Zelensky lui-même l'a qualifié de « provocation puérile », Fred !"],
     phrases: [
       ["Le 16 mars 2022, la chaîne ukrainienne Ukraine 24, victime d'un piratage, a diffusé un deepfake de Volodymyr Zelensky appelant à rendre les armes.", [S.zelensky]],
       ["Meta a supprimé la vidéo et Zelensky l'a qualifiée de « provocation puérile ».", [S.zelensky]]
@@ -38,6 +40,8 @@ const BASE = [
     test: n => /biden/.test(n) && /(appel|robocall|voix|primaire|new hampshire)/.test(n),
     verdict: "faux", score: 8,
     titre: "Appels automatisés avec une fausse voix de Joe Biden",
+    dialogue: ["Hé Jamy, pourquoi dit-on que Joe Biden a appelé les électeurs à ne pas voter ?",
+      "Parce que sa voix a été imitée par une IA ! Un consultant l'a avoué, et ce genre d'appel est désormais interdit aux États-Unis, Fred !"],
     phrases: [
       ["En janvier 2024, des appels automatisés imitant la voix de Joe Biden ont incité des électeurs du New Hampshire à ne pas voter à la primaire.", [S.bidenBbc, S.biden20]],
       ["Un consultant politique a reconnu avoir fait imiter la voix du président grâce à un outil d'IA.", [S.biden20]],
@@ -48,6 +52,8 @@ const BASE = [
     test: n => /pape/.test(n) && /(doudoune|balenciaga|puffer)/.test(n),
     verdict: "faux", score: 10,
     titre: "Le pape François en doudoune blanche",
+    dialogue: ["Hé Jamy, pourquoi dit-on que le pape a été photographié en doudoune blanche ?",
+      "Parce que cette image très stylée a été fabriquée par une IA comme Midjourney : le pape n'a jamais posé pour elle, Fred !"],
     phrases: [
       ["L'image du pape François en doudoune blanche fait partie des fausses photos de personnalités créées par des outils d'IA comme Midjourney, devenues virales en mars 2023.", [S.pape]]
     ]
@@ -56,6 +62,8 @@ const BASE = [
     test: n => /pentag/.test(n) && /(explosion|attaque|bombe|flamme)/.test(n),
     verdict: "faux", score: 8,
     titre: "Fausse explosion au Pentagone",
+    dialogue: ["Hé Jamy, pourquoi dit-on qu'il y a eu une explosion au Pentagone ?",
+      "À cause d'une image très probablement générée par IA, relayée par un faux compte « Bloomberg » : la Bourse a tremblé, mais il n'y a eu aucune attaque, Fred !"],
     phrases: [
       ["Le 22 mai 2023, une image très probablement générée par IA montrant une explosion au Pentagone a circulé sur Twitter.", [S.pentagoneNum, S.pentagone20]],
       ["Elle a notamment été publiée par un compte certifié se faisant passer pour l'agence Bloomberg.", [S.pentagoneNum, S.pentagone20]],
@@ -66,6 +74,8 @@ const BASE = [
     test: n => /terre (est )?plate|platiste/.test(n),
     verdict: "faux", score: 3,
     titre: "La Terre est plate",
+    dialogue: ["Hé Jamy, pourquoi dit-on que la Terre est plate ?",
+      "C'est une idée reçue tenace, mais la Terre est une sphère légèrement aplatie aux pôles, à cause de sa rotation, Fred !"],
     phrases: [
       ["La Terre n'est pas plate : c'est un ellipsoïde, c'est-à-dire une sphère légèrement aplatie aux pôles à cause de sa rotation.", [S.terre]]
     ]
@@ -74,6 +84,8 @@ const BASE = [
     test: n => /terre (est )?ronde/.test(n),
     verdict: "vrai", score: 90,
     titre: "La Terre est ronde",
+    dialogue: ["Hé Jamy, pourquoi dit-on que la Terre est ronde ?",
+      "Parce que c'est presque vrai : c'est une sphère légèrement aplatie aux pôles, ce que les scientifiques appellent un ellipsoïde, Fred !"],
     phrases: [
       ["La Terre est quasi sphérique : plus précisément un ellipsoïde, légèrement aplati aux pôles.", [S.terre]]
     ]
@@ -82,6 +94,8 @@ const BASE = [
     test: n => /vaccin/.test(n) && /autis/.test(n),
     verdict: "faux", score: 5,
     titre: "Vaccins et autisme",
+    dialogue: ["Hé Jamy, pourquoi dit-on que les vaccins provoquent l'autisme ?",
+      "À cause d'une petite étude de 1998, sur 12 enfants seulement, qui a été désavouée : depuis, l'OMS et une étude sur 650 000 enfants n'ont trouvé aucun lien, Fred !"],
     phrases: [
       ["En décembre 2025, une analyse de l'OMS portant sur 31 études n'a établi aucun lien entre les vaccins et l'autisme.", [S.vaccinOms]],
       ["L'étude de 1998 qui suggérait un lien ne portait que sur 12 enfants et a été désavouée ; une étude sur plus de 650 000 enfants danois n'a trouvé aucun lien avec le vaccin ROR.", [S.vaccinRor]]
@@ -91,6 +105,8 @@ const BASE = [
     test: n => /\b(10|dix) ?(%|pour cent)? (du|de notre|de son|de leur|des|de nos) (cerveau|capacites)/.test(n),
     verdict: "faux", score: 6,
     titre: "On n'utilise que 10 % de son cerveau",
+    dialogue: ["Hé Jamy, pourquoi dit-on qu'on n'utilise que 10 % de notre cerveau ?",
+      "C'est un « neuromythe » ! L'IRM montre qu'aucune zone du cerveau n'est endormie : on l'utilise en entier, Fred !"],
     phrases: [
       ["L'imagerie par IRM montre qu'aucune région du cerveau n'est endormie ou inutilisée.", [S.cerveau20]],
       ["Les chercheurs classent cette idée parmi les « neuromythes ».", [S.cerveauCnrs, S.cerveau20]]
@@ -100,6 +116,8 @@ const BASE = [
     test: n => /eiffel/.test(n) && /\b(330|324)\b/.test(n),
     verdict: "vrai", score: 95,
     titre: "Hauteur de la tour Eiffel",
+    dialogue: ["Hé Jamy, pourquoi dit-on que la tour Eiffel mesure 330 mètres ?",
+      "Parce que c'est vrai depuis mars 2022 : une nouvelle antenne l'a fait grandir de 324 à 330 mètres, Fred !"],
     phrases: [
       ["La tour Eiffel mesure 330 mètres de haut.", [S.eiffelOf, S.eiffelActu]],
       ["Elle mesurait 324 mètres avant l'installation d'une nouvelle antenne en mars 2022.", [S.eiffelActu]]
@@ -209,11 +227,21 @@ function resultatSource(cas, type) {
   }));
   return {
     verifiable: true, type, verdict: cas.verdict, score: cas.score, titre: cas.titre, phrases,
+    dialogue: cas.dialogue ? { fred: cas.dialogue[0], jamy: cas.dialogue[1] } : null,
     sources: sources.map((s, i) => ({ num: i + 1, nom: s.nom, url: s.url, domaine: new URL(s.url).hostname.replace(/^www\./, "") }))
   };
 }
 
+// Lien YouTube (vidéo, short, live…) : analysé uniquement par le serveur
+const MOTIF_YOUTUBE = /(?:youtube\.com\/(?:watch\?(?:\S*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
+
 function analyserLocal(texte, raisonServeur) {
+  if (MOTIF_YOUTUBE.test(texte)) {
+    return {
+      verifiable: false, verdict: "incertain", titre: "Vidéo YouTube", signaux: [],
+      raison: raisonServeur || "L'analyse des vidéos YouTube nécessite le serveur d'IA, qui n'est pas disponible."
+    };
+  }
   const n = normaliser(texte);
   const cas = BASE.find(e => e.test(n));
   const sig = signaux(texte, n);
@@ -236,7 +264,8 @@ function analyserLocal(texte, raisonServeur) {
 /* ---------- Analyse par le serveur (IA + recherche web) ---------- */
 async function analyserAvecServeur(texte) {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 90000); // le serveur gratuit peut mettre ~50 s à se réveiller
+  // le serveur gratuit peut mettre ~50 s à se réveiller, et une vidéo demande plus de temps
+  const timer = setTimeout(() => ctrl.abort(), MOTIF_YOUTUBE.test(texte) ? 150000 : 90000);
   try {
     const rep = await fetch(API_URL.replace(/\/$/, "") + "/api/verifier", {
       method: "POST",
@@ -252,7 +281,8 @@ async function analyserAvecServeur(texte) {
         verifiable: false, verdict: "incertain", titre: d.titre || "Analyse",
         raison: d.raison || "Aucune source reconnue trouvée.",
         sourcesEcartees: d.sources_ecartees || 0,
-        signaux: signaux(texte, normaliser(texte))
+        signaux: d.video ? [] : signaux(texte, normaliser(texte)),
+        video: d.video || null
       };
     }
     const sources = (d.sources || [])
@@ -266,8 +296,12 @@ async function analyserAvecServeur(texte) {
       return { verifiable: false, verdict: "incertain", titre: d.titre || "Analyse", raison: "Aucune phrase de l'analyse n'est appuyée par une source reconnue.", signaux: [] };
     }
     return {
-      verifiable: true, type: ({ factcheck: "factcheck", "factcheck+ia": "factcheckIa", "web+ia": "webIa" })[d.moteur] || "ia", verdict: d.verdict, score: Number(d.score) || 50,
-      titre: d.titre || "Analyse", phrases, sources, sourcesEcartees: d.sources_ecartees || 0
+      verifiable: true, type: ({ factcheck: "factcheck", "factcheck+ia": "factcheckIa", "web+ia": "webIa", "video+web+ia": "videoIa" })[d.moteur] || "ia", verdict: d.verdict, score: Number.isFinite(Number(d.score)) ? Number(d.score) : 50,
+      titre: d.titre || "Analyse", phrases, sources, sourcesEcartees: d.sources_ecartees || 0,
+      video: d.video || null,
+      dialogue: d.dialogue || null,
+      affirmations: Array.isArray(d.affirmations) ? d.affirmations.map(String) : [],
+      nonVerifiees: Array.isArray(d.affirmations_non_verifiees) ? d.affirmations_non_verifiees.map(String) : []
     };
   } finally {
     clearTimeout(timer);
@@ -282,6 +316,7 @@ const TYPES = {
   factcheck: "Vérifications publiées par des rédactions de fact-checking (via Google Fact Check)",
   factcheckIa: "Vérifications de rédactions (Google Fact Check), expliquées par l'IA Gemini",
   webIa: "Recherche sur internet (sites reconnus) analysée par l'IA Gemini",
+  videoIa: "Vidéo analysée par l'IA Gemini, affirmations vérifiées sur des sites reconnus",
   nonverif: "Information non vérifiable"
 };
 const COULEURS = { vrai: "var(--vrai)", faux: "var(--faux)", incertain: "var(--incertain)" };
@@ -318,6 +353,22 @@ function afficher(texte, r) {
   $("kind").textContent = r.verifiable ? TYPES[r.type] : TYPES.nonverif;
   $("echo").textContent = texte;
 
+  // Vidéo YouTube : miniature, titre et méthode d'analyse
+  const v = r.video, bloc = $("video");
+  bloc.hidden = !v;
+  if (v) {
+    const lienVideo = urlSure(v.url);
+    if (lienVideo) bloc.href = lienVideo; else bloc.removeAttribute("href");
+    $("videoMini").src = urlSure(v.miniature) || "";
+    $("videoTitre").textContent = v.titre || "Vidéo YouTube";
+    $("videoInfo").textContent = [
+      v.auteur,
+      v.methode === "gemini" ? "Gemini a regardé les 5 premières minutes"
+        : v.methode === "titre" ? "Gemini n'a pas pu regarder la vidéo : seul le titre a été vérifié" : "",
+      v.resume
+    ].filter(Boolean).join(" · ");
+  }
+
   const score = r.verifiable ? r.score : 0;
   $("score").textContent = r.verifiable ? score + " %" : "—";
   $("gauge").setAttribute("aria-valuenow", score);
@@ -346,6 +397,12 @@ function afficher(texte, r) {
       ul.appendChild(li);
     });
     explain.appendChild(ul);
+    if (r.nonVerifiees && r.nonVerifiees.length) {
+      const p = document.createElement("p");
+      p.className = "non-verifiees";
+      p.textContent = "Non vérifiable faute de source reconnue : « " + r.nonVerifiees.join(" » ; « ") + " ».";
+      explain.appendChild(p);
+    }
   } else {
     const p = document.createElement("p");
     p.textContent = r.raison;
@@ -379,6 +436,70 @@ function afficher(texte, r) {
       ? r.sourcesEcartees + " autre(s) source(s) trouvée(s) mais écartée(s) car non reconnue(s)."
       : "";
   }
+  jouerDialogue(texte, r);
+}
+
+/* ---------- Fred et Jamy ---------- */
+
+// Mets en minuscule le début d'une phrase seulement s'il commence par un mot courant
+// (« La Terre… » → « la Terre… », mais « Thomas Pesquet… » reste tel quel).
+function enMinuscule(s) {
+  return /^(le|la|les|l'|l’|un|une|des|du|on|il|elle|ils|elles|ce|cet|cette|ces|c'est|c’est|mon|ma|mes|notre|nos|tout|tous|toute|toutes)\b/i.test(s)
+    ? s.charAt(0).toLowerCase() + s.slice(1) : s;
+}
+
+function couper(s, max) {
+  s = String(s).trim();
+  if (s.length <= max) return s;
+  return s.slice(0, s.lastIndexOf(" ", max)) + "…";
+}
+
+// Dialogue de secours, construit uniquement à partir du verdict et des phrases sourcées
+function dialogueSecours(texte, r) {
+  if (!r.verifiable) {
+    return {
+      fred: r.video ? "Hé Jamy, pourquoi cette vidéo est-elle difficile à vérifier ?"
+                    : "Hé Jamy, pourquoi cette information est-elle difficile à vérifier ?",
+      jamy: "Parce qu'aucune source fiable ne la confirme ni ne la dément pour l'instant : dans le doute, on ne partage pas, Fred !"
+    };
+  }
+  let sujet;
+  if (r.video) {
+    const aff = (r.affirmations && r.affirmations[0]) || r.video.titre || "ces choses-là";
+    sujet = "cette vidéo affirme que " + enMinuscule(couper(aff, 120).replace(/[.!?…]+$/, ""));
+  } else {
+    sujet = "dit-on que " + enMinuscule(couper(texte, 120).replace(/[.!?…]+$/, ""));
+  }
+  const fred = r.video ? `Hé Jamy, pourquoi ${sujet} ?` : `Hé Jamy, pourquoi ${sujet} ?`;
+  // La 1re phrase sourcée (pour une vidéo, sans le préfixe « La vidéo affirme… : »)
+  let preuve = (r.phrases[0] && r.phrases[0].texte) || "";
+  preuve = couper(preuve.replace(/^La vidéo affirme « .*? » \((VRAI|FAUX)\) : /, ""), 200).replace(/[.!?…]+$/, "");
+  const jamy = r.verdict === "vrai"
+    ? `Parce que des sources reconnues le confirment : ${preuve}, Fred !`
+    : `C'est faux ! Les sources reconnues le démentent : ${preuve}, Fred !`;
+  return { fred, jamy };
+}
+
+let minuteursDialogue = [];
+function jouerDialogue(texte, r) {
+  minuteursDialogue.forEach(clearTimeout);
+  minuteursDialogue = [];
+  const ia = r.dialogue && typeof r.dialogue.fred === "string" && typeof r.dialogue.jamy === "string"
+    && /^h[ée] jamy,? pourquoi/i.test(r.dialogue.fred) && /fred\s*!$/i.test(r.dialogue.jamy);
+  const d = ia ? r.dialogue : dialogueSecours(texte, r);
+  const fred = document.querySelector(".perso.fred"), jamy = document.querySelector(".perso.jamy");
+  fred.classList.remove("parle"); jamy.classList.remove("parle");
+  $("bulleFred").textContent = d.fred;
+  $("bulleJamy").textContent = d.jamy;
+  void fred.offsetWidth; // relance l'animation
+  const lent = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 1;
+  minuteursDialogue.push(setTimeout(() => fred.classList.add("parle"), 300 * lent));
+  minuteursDialogue.push(setTimeout(() => jamy.classList.add("parle"), 1500 * lent));
+}
+
+function cacherDialogue() {
+  minuteursDialogue.forEach(clearTimeout);
+  document.querySelectorAll(".perso").forEach(p => p.classList.remove("parle"));
 }
 
 function ouvrirPopup(r) {
@@ -417,12 +538,18 @@ async function verifier(texte) {
   $("claim").value = texte;
   $("send").disabled = true;
   $("result").hidden = true;
+  cacherDialogue();
   $("loader").hidden = false; // le dino court pendant la recherche
-  $("loaderTexte").textContent = "Je cherche des sources reconnues…";
+  const estVideo = MOTIF_YOUTUBE.test(texte);
+  $("loaderTexte").textContent = estVideo
+    ? "Je regarde la vidéo, puis je cherche des sources reconnues… (jusqu'à 1 min)"
+    : "Je cherche des sources reconnues…";
   $("loader").scrollIntoView({ behavior: "smooth", block: "center" });
   setMood("thinking");
   const reveil = setTimeout(() => {
-    $("loaderTexte").textContent = "Le serveur se réveille, ça peut prendre jusqu'à une minute…";
+    $("loaderTexte").textContent = estVideo
+      ? "J'analyse la vidéo… (si le serveur dormait, compte jusqu'à 2 minutes)"
+      : "Le serveur se réveille, ça peut prendre jusqu'à une minute…";
   }, 8000);
 
   let r = null;
